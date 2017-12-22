@@ -17,11 +17,15 @@ THREE.ARUtils.getARDisplay().then(function (display) {
     vrDisplay = display;
     init();
   } else {
+    console.warn('Unsupported');
     THREE.ARUtils.displayUnsupportedMessage();
   }
 });
 
 function init() {
+
+  console.log('Initialise');
+
   // Turn on the debugging panel
   var arDebug = new THREE.ARDebug(vrDisplay);
   document.body.appendChild(arDebug.getElement());
@@ -55,21 +59,31 @@ function init() {
 
   // Create the snowman and add it to the scene. Set the position far away so that it won't appear visible until the
   // first hit is found, and move it there
-  var loader = new THREE.JSONLoader();
-  loader.load('models/snowman/threejs/snowman.json', function (geometry, materials) {
-    var material = materials[0];
-    snowman = new THREE.Mesh(geometry, material);
+  var loader = new THREE.ObjectLoader();
+  loader.load('models/snowman/threejs/snowman.json', function (object) {
+
+    console.log('Loaded snowman model', object);
+
+    snowman = object;
+
+    // Scale to a more sensible size
+    snowman.scale.set(0.3, 0.3, 0.3);
 
     // Place the cube very far to initialize
-    cube.position.set(10000, 10000, 10000);
+    //snowman.position.set(10000, 10000, 10000);
+    snowman.position.set(0, 0, 0);
 
-    scene.add(cube);
+    snowman.rotation.set(0, 1, 0);
+    
+    //snowman.lookAt(camera.position);
+
+    scene.add(snowman);
 
     // Bind our event handlers
     window.addEventListener('resize', onWindowResize, false);
     canvas.addEventListener('touchstart', onClick, false);
 
-    // Kick off the render loop!
+    console.log('Kick off render loop 4');
     update();
 
   });
