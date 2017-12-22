@@ -227,7 +227,7 @@ function hitTestSnowman(x, y) {
 
   var raycaster = new THREE.Raycaster();
 
-  raycaster.setFromCamera( {x: x, y: y}, camera );
+  raycaster.setFromCamera( {x: x * 2 - 1, y: -y * 2 + 1}, camera );
 
   var hits = raycaster.intersectObjects([snowman]);
 
