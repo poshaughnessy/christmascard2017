@@ -176,9 +176,9 @@ function onClick (e) {
     return;
   }
 
-  // Inspect the event object and generate normalize screen coordinates (between 0 and 1) for the screen position.
-  var x = e.touches[0].pageX / window.innerWidth;
-  var y = e.touches[0].pageY / window.innerHeight;
+  // Inspect the event object and generate normalized screen coordinates (between 0 and 1) for the screen position.
+  var x = e.touches[0].pageX;
+  var y = e.touches[0].pageY;
 
   if ( hitTestSnowman(x, y) ) {
 
@@ -205,9 +205,18 @@ function onClick (e) {
 
 function hitTestSnowman(x, y) {
 
+  // We need to transform x and y into being between -1 and 1
+  var normalisedX =  ((2 * x) / window.innerWidth) - 1;
+  var normalisedY =  ((-2 * y) / window.innerHeight) + 1;
+
+  console.log('camera pos', camera.position);
+  console.log('Snowman hit test', normalisedX, normalisedY);
+
   var raycaster = new THREE.Raycaster();
 
-  raycaster.setFromCamera( {x: x * 2 - 1, y: -y * 2 + 1}, camera );
+  raycaster.setFromCamera( {x: normalisedX, y: normalisedY}, camera );
+
+  console.log('raycaster direction', raycaster.ray.direction);
 
   var hits = raycaster.intersectObjects([snowman]);
 
@@ -219,10 +228,13 @@ function hitTestSnowman(x, y) {
 
 function hitTestSurface(x, y) {
 
-  // Send a ray from point of click to real world surface and attempt to find a hit. Returns an array of potential hits.
-  var hits = vrDisplay.hitTest(x, y);
+  // We need to transform x and y into being between 0 and 1
 
-  console.log('hits', hits);
+  var normalisedX = x / window.innerWidth;
+  var normalisedY = y / window.innerHeight;
+
+  // Send a ray from point of click to real world surface and attempt to find a hit. Returns an array of potential hits.
+  var hits = vrDisplay.hitTest(normalisedX, normalisedY);
 
   // If a hit is found, just use the first one
   return (hits && hits.length) ? hits[0] : null;
