@@ -8,6 +8,8 @@ var scene;
 var renderer;
 var snowman;
 var snowGeometry;
+var raycaster = new THREE.Raycaster();
+
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API to see if there are any AR-capable WebVR VRDisplays.
@@ -82,7 +84,7 @@ function init() {
     window.addEventListener('resize', onWindowResize, false);
     canvas.addEventListener('touchstart', onClick, false);
 
-    console.log('Kick off render loop 7');
+    console.log('Kick off render loop 9');
     update();
 
   });
@@ -127,7 +129,7 @@ function update() {
   arView.render();
 
   // Update our camera projection matrix in the event that the near or far planes have updated
-  camera.updateProjectionMatrix();
+  //camera.updateProjectionMatrix();
 
   // Update our perspective camera's positioning
   vrControls.update();
@@ -209,18 +211,13 @@ function hitTestSnowman(x, y) {
   var normalisedX =  ((2 * x) / window.innerWidth) - 1;
   var normalisedY =  ((-2 * y) / window.innerHeight) + 1;
 
-  console.log('camera pos', camera.position);
-  console.log('Snowman hit test', normalisedX, normalisedY);
-
-  var raycaster = new THREE.Raycaster();
-
   raycaster.setFromCamera( {x: normalisedX, y: normalisedY}, camera );
 
-  console.log('raycaster direction', raycaster.ray.direction);
+  var hits = raycaster.intersectObjects([snowman], true);
 
-  var hits = raycaster.intersectObjects([snowman]);
-
-  console.log('intersects', hits);
+  // TEMP draw debug arrow
+  //var arrow = new THREE.ArrowHelper( new THREE.Vector3().copy(raycaster.ray.direction), camera.getWorldPosition().clone(), 100, Math.random() * 0xffffff );
+  //scene.add( arrow );
 
   return (hits && hits.length) ? hits[0] : null;
 
