@@ -7,14 +7,6 @@ var camera;
 var scene;
 var renderer;
 var snowman;
-var particleSystem;
-var tick;
-var snowOptions;
-var spawnerOptions;
-var clock = new THREE.Clock();
-var projector = new THREE.Projector();
-var width = window.innerWidth;
-var height = window.innerHeight;
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API to see if there are any AR-capable WebVR VRDisplays.
@@ -97,42 +89,32 @@ function init() {
   initSnow();
 }
 
+/**
+ * Based on: https://threejs.org/examples/?q=points#webgl_points_random
+ */
 function initSnow() {
 
-  particleSystem = new THREE.GPUParticleSystem({
-    maxParticles: 100000,
-    particleNoiseTex: 'images/perlin-512.png',
-    particleSpriteTex: 'images/snow-particle.png'
-  });
-
-  scene.add( particleSystem );
-
-  // options passed during each spawned
-  snowOptions = {
-    position: new THREE.Vector3(0, 2, -2),
-    positionRandomness: .3,
-    velocity: new THREE.Vector3(0, -0.1, 0),
-    velocityRandomness: .1,
-    color: 0xffffff,
-    colorRandomness: .1,
-    turbulence: .5,
-    lifetime: 1000,
-    size: 5,
-    sizeRandomness: 1
-  };
-  spawnerOptions = {
-    spawnRate: 10000,
-    horizontalSpeed: .1,
-    verticalSpeed: .5,
-    timeScale: 1
-  };
-
-  //for (var i=0; i < 1000; i++) {
-  //  options.position.x += i / 100;
-  //  particleSystem.spawnParticle( options );
-  //}
-  //
-  //console.log('Spawned snow');
+  var geometry = new THREE.Geometry();
+  for ( var i = 0; i < 5000; i ++ ) {
+    var vertex = new THREE.Vector3();
+    vertex.x = Math.random() * 2000 - 1000;
+    vertex.y = Math.random() * 2000 - 1000;
+    vertex.z = Math.random() * 2000 - 1000;
+    geometry.vertices.push( vertex );
+  }
+  var size  = Math.max(1, Math.random() * 20);
+  var material = new THREE.PointsMaterial( {
+      color: 0xFFFFFF,
+      size: 5,
+      map: THREE.ImageUtils.loadTexture('images/snow-particle.png'),
+      blending: THREE.AdditiveBlending,
+      transparent: true
+    });
+  var particles = new THREE.Points( geometry, material );
+  particles.rotation.x = Math.random() * 6;
+  particles.rotation.y = Math.random() * 6;
+  particles.rotation.z = Math.random() * 6;
+  scene.add( particles );
 
 }
 
@@ -156,19 +138,19 @@ function update() {
   // Kick off the requestAnimationFrame to call this function when a new VRDisplay frame is rendered
   vrDisplay.requestAnimationFrame(update);
 
-  var delta = clock.getDelta() * spawnerOptions.timeScale;
-  tick += delta;
-  if ( tick < 0 ) {
-    tick = 0;
-  }
+  // Update snow
+  var time = Date.now() * 0.00005;
+  for ( var i = 0; i < scene.children.length; i ++ ) {
+    var object = scene.children[ i ];
+    if ( object instanceof THREE.Points ) {
+      //object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
 
-  if ( delta > 0 ) {
-    for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
-      particleSystem.spawnParticle( snowOptions );
+
+      if (object.position.y < -5) {
+        object.position.y = 10;
+      }
     }
   }
-
-  particleSystem.update(tick);
 
   // Render our three.js virtual scene
   renderer.clearDepth();
