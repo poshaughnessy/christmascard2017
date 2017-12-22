@@ -71,11 +71,11 @@ function init() {
 
     // Place the cube very far to initialize
     //snowman.position.set(10000, 10000, 10000);
-    snowman.position.set(0, 0, 0);
+    snowman.position.set(0, 0, -2);
 
-    snowman.rotation.set(0, 1, 0);
-    
-    //snowman.lookAt(camera.position);
+    snowman.rotation.set(0, Math.PI / 2, 0);
+
+    snowman.up.set(0, 1, 0);
 
     scene.add(snowman);
 
@@ -83,7 +83,7 @@ function init() {
     window.addEventListener('resize', onWindowResize, false);
     canvas.addEventListener('touchstart', onClick, false);
 
-    console.log('Kick off render loop 4');
+    console.log('Kick off render loop 7');
     update();
 
   });
@@ -147,5 +147,10 @@ function onClick (e) {
       hit,   // The VRHit object to move the cube to
       1,     // Easing value from 0 to 1; we want to move the cube directly to the hit position
       true); // Whether or not we also apply orientation
+
+    // TODO face the user - but needs to change y rotation only
+    //snowman.lookAt(camera.position);
+    snowman.rotation.y += Math.PI / 2;
+
   }
 }
