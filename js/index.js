@@ -7,6 +7,7 @@ var camera;
 var scene;
 var renderer;
 var snowman;
+var snowGeometry;
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API to see if there are any AR-capable WebVR VRDisplays.
@@ -94,15 +95,14 @@ function init() {
  */
 function initSnow() {
 
-  var geometry = new THREE.Geometry();
+  snowGeometry = new THREE.Geometry();
   for ( var i = 0; i < 5000; i ++ ) {
     var vertex = new THREE.Vector3();
-    vertex.x = Math.random() * 2000 - 1000;
-    vertex.y = Math.random() * 2000 - 1000;
-    vertex.z = Math.random() * 2000 - 1000;
-    geometry.vertices.push( vertex );
+    vertex.x = Math.random() * 1000 - 500;
+    vertex.y = Math.random() * 1000 - 500;
+    vertex.z = Math.random() * 1000 - 500;
+    snowGeometry.vertices.push( vertex );
   }
-  var size  = Math.max(1, Math.random() * 20);
   var material = new THREE.PointsMaterial( {
       color: 0xFFFFFF,
       size: 5,
@@ -110,10 +110,7 @@ function initSnow() {
       blending: THREE.AdditiveBlending,
       transparent: true
     });
-  var particles = new THREE.Points( geometry, material );
-  particles.rotation.x = Math.random() * 6;
-  particles.rotation.y = Math.random() * 6;
-  particles.rotation.z = Math.random() * 6;
+  var particles = new THREE.Points( snowGeometry, material );
   scene.add( particles );
 
 }
@@ -139,18 +136,19 @@ function update() {
   vrDisplay.requestAnimationFrame(update);
 
   // Update snow
-  var time = Date.now() * 0.00005;
-  for ( var i = 0; i < scene.children.length; i ++ ) {
-    var object = scene.children[ i ];
-    if ( object instanceof THREE.Points ) {
-      //object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
-
-
-      if (object.position.y < -5) {
-        object.position.y = 10;
-      }
+  var numVertices = snowGeometry.vertices.length;
+  for ( var i = 0; i < numVertices; i ++ ) {
+    var snowParticle = snowGeometry.vertices[i];
+    // Some small, random lateral movement
+    snowParticle.x += (0.1 - Math.random() / 10);
+    // Move downwards, slightly randomly
+    snowParticle.y -= Math.min(0.5, Math.random() * 2);
+    if (snowParticle.y < -500) {
+      snowParticle.y = 500;
     }
   }
+
+  snowGeometry.verticesNeedUpdate = true;
 
   // Render our three.js virtual scene
   renderer.clearDepth();
