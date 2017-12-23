@@ -8,3 +8,6 @@ to make it come alive!
 
 To try it out, you will need a phone that supports ARCore, i.e. a Pixel or an S8. [Please follow the instructions here to
 install the experimental WebARonARCore browser](https://github.com/google-ar/WebARonARCore).
+
+NB. You might need to try tapping a few times before it recognises that you've tapped a surface. It could also help to
+take a look around first!
