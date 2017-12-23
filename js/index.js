@@ -8,8 +8,12 @@ var scene;
 var renderer;
 var snowman;
 var snowGeometry;
+var snowParticles;
+var isSnowmanRotating = false;
+var isSnowShowing = false;
 var raycaster = new THREE.Raycaster();
 
+var songElement = document.getElementById('song');
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API to see if there are any AR-capable WebVR VRDisplays.
@@ -112,9 +116,29 @@ function initSnow() {
       blending: THREE.AdditiveBlending,
       transparent: true
     });
-  var particles = new THREE.Points( snowGeometry, material );
-  scene.add( particles );
+  snowParticles = new THREE.Points( snowGeometry, material );
 
+}
+
+function rotateSnowman() {
+  isSnowmanRotating = true;
+}
+
+function showSnow() {
+  scene.add( snowParticles );
+  isSnowShowing = true;
+}
+
+function playSong() {
+  var playPromise = songElement.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(function() {
+      console.log('Audio should be playing');
+    }).catch(function(error) {
+      console.warn('Browser refused to play audio', error);
+    });
+  }
 }
 
 
@@ -137,20 +161,25 @@ function update() {
   // Kick off the requestAnimationFrame to call this function when a new VRDisplay frame is rendered
   vrDisplay.requestAnimationFrame(update);
 
-  // Update snow
-  var numVertices = snowGeometry.vertices.length;
-  for ( var i = 0; i < numVertices; i ++ ) {
-    var snowParticle = snowGeometry.vertices[i];
-    // Some small, random lateral movement
-    snowParticle.x += (0.1 - Math.random() / 10);
-    // Move downwards, slightly randomly
-    snowParticle.y -= Math.min(0.5, Math.random() * 2);
-    if (snowParticle.y < -500) {
-      snowParticle.y = 500;
+  if (isSnowShowing) {
+    // Update snow
+    var numVertices = snowGeometry.vertices.length;
+    for ( var i = 0; i < numVertices; i ++ ) {
+      var snowParticle = snowGeometry.vertices[i];
+      // Some small, random lateral movement
+      snowParticle.x += (0.1 - Math.random() / 10);
+      // Move downwards, slightly randomly
+      snowParticle.y -= Math.min(0.5, Math.random() * 2);
+      if (snowParticle.y < -500) {
+        snowParticle.y = 500;
+      }
     }
+    snowGeometry.verticesNeedUpdate = true;
   }
 
-  snowGeometry.verticesNeedUpdate = true;
+  if (isSnowmanRotating) {
+    snowman.rotation.y += 0.04;
+  }
 
   // Render our three.js virtual scene
   renderer.clearDepth();
@@ -184,7 +213,7 @@ function onClick (e) {
 
   if ( hitTestSnowman(x, y) ) {
 
-    alert('You clicked the snowman');
+    onClickSnowman();
 
   } else {
 
@@ -203,6 +232,12 @@ function onClick (e) {
     }
 
   }
+}
+
+function onClickSnowman() {
+  showSnow();
+  playSong();
+  rotateSnowman();
 }
 
 function hitTestSnowman(x, y) {
