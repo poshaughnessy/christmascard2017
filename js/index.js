@@ -76,9 +76,8 @@ function init() {
     // Scale to a more sensible size
     snowman.scale.set(0.3, 0.3, 0.3);
 
-    // Place the cube very far to initialize
-    //snowman.position.set(10000, 10000, 10000);
-    snowman.position.set(0, 0, -2);
+    // Place the snowman very far away to begin with
+    snowman.position.set(10000, 10000, 10000);
 
     snowman.rotation.set(0, Math.PI / 2, 0);
 
@@ -220,10 +219,10 @@ function onClick (e) {
     var hit = hitTestSurface(x, y);
 
     if (hit) {
-      // Use the `placeObjectAtHit` utility to position the cube where the hit occurred
+      // Use the `placeObjectAtHit` utility to position the snowman where the hit occurred
       THREE.ARUtils.placeObjectAtHit(snowman,  // The object to place
-        hit,   // The VRHit object to move the cube to
-        1,     // Easing value from 0 to 1; we want to move the cube directly to the hit position
+        hit,   // The VRHit object to move the snowman to
+        1,     // Easing value from 0 to 1; we want to move the snowman directly to the hit position
         true); // Whether or not we also apply orientation
 
       // TODO face the user - but lookAt is messing up orientation other than just y rotation
