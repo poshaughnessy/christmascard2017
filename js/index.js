@@ -34,8 +34,8 @@ function init() {
   console.log('Initialise');
 
   // Turn on the debugging panel
-  var arDebug = new THREE.ARDebug(vrDisplay);
-  document.body.appendChild(arDebug.getElement());
+  //var arDebug = new THREE.ARDebug(vrDisplay);
+  //document.body.appendChild(arDebug.getElement());
 
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -87,7 +87,6 @@ function init() {
     window.addEventListener('resize', onWindowResize, false);
     canvas.addEventListener('touchstart', onClick, false);
 
-    console.log('Kick off render loop 9');
     update();
 
   });
