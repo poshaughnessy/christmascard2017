@@ -11,3 +11,6 @@ install the experimental WebARonARCore browser](https://github.com/google-ar/Web
 
 NB. You might need to try tapping a few times before it recognises that you've tapped a surface. It could also help to
 take a look around first!
+
+Based on Google's "spawn on surface" AR example:
+https://github.com/google-ar/three.ar.js/blob/master/examples/spawn-at-surface.html
